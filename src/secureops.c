@@ -57,6 +57,8 @@ int help()
     printf("    secureops -y <username> <path to environment python> <path to django-admin.py>\n");
     printf("Run pip install on a requirements file\n");
     printf("    secureops -i <username> <path to pip> <path to requirements file>\n");
+    printf("Recursivly force delete a folder from the filesystem\n");
+    printf("    secureops -g <path to folder>\n");
     return 1;
 }
 
@@ -595,6 +597,20 @@ int main(int argc, char **argv)
                 "-r", requirements,
                 (char *)NULL);
         printf("Could not launch pip install\n");
+
+        return 255;
+    }
+
+    if (strcmp(argv[1], "-g") == 0) {
+        if (argc < 3) {
+            printf("Must specify a path to delete with -g\n");
+            return help();
+        }
+        char *path_to_dir = argv[2];
+
+        execl("/bin/rm", "/bin/rm", 
+                "-rf", path_to_dir, 
+                (char *)NULL);
 
         return 255;
     }
