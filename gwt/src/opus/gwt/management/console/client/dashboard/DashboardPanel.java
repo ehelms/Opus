@@ -201,7 +201,7 @@ public class DashboardPanel extends Composite {
 
 			applicationLabel.addMouseOverHandler(new MouseOverHandler() {
 				public void onMouseOver(MouseOverEvent event){
-					if(project.isActive()) {
+					if(active) {
 						applicationLabel.setStyleName(manager.appIconActive());
 						appName.addStyleName(manager.text());
 						httpLabel.addStyleName(manager.link());
@@ -222,7 +222,7 @@ public class DashboardPanel extends Composite {
 			
 			httpLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					if(project.isActive()) {
+					if(active) {
 						Window.Location.assign(project.getURLS().get(0) + app.getAppName());
 					}
 				}
@@ -230,7 +230,7 @@ public class DashboardPanel extends Composite {
 			
 			httpsLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					if(project.isActive()) {
+					if(active) {
 						Window.Location.assign(project.getURLS().get(1) + app.getAppName());
 					}
 				}
@@ -238,7 +238,7 @@ public class DashboardPanel extends Composite {
 			
 			settingsLabel.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					if(project.isActive()) {
+					if(active) {
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS, app.getAppName()));
 					}
 				}
