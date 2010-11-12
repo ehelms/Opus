@@ -9,7 +9,7 @@ public class PanelTransitionEvent extends GwtEvent<PanelTransitionEventHandler> 
 	public static Type<PanelTransitionEventHandler> TYPE = new Type<PanelTransitionEventHandler>();
 	//private String transitionType;
 	private Widget panel;
-	public enum TransitionTypes{PREVIOUS, NEXT, DELETE, SETTINGS, DEPLOY, PROJECTS, DASHBOARD};
+	public enum TransitionTypes{PREVIOUS, NEXT, DELETE, SETTINGS, DEPLOY, PROJECTS, DASHBOARD, PROJECTSETTINGS};
 	private TransitionTypes transitionType;
 	public String name;
 	

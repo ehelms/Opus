@@ -19,6 +19,7 @@ package opus.gwt.management.console.client;
 import opus.gwt.management.console.client.dashboard.IconPanel;
 import opus.gwt.management.console.client.dashboard.ProjectManagerController;
 import opus.gwt.management.console.client.deployer.ProjectDeployerController;
+import opus.gwt.management.console.client.event.BreadCrumbEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.navigation.BreadCrumbsPanel;
@@ -59,12 +60,12 @@ public class ManagementConsole extends Composite {
 		this.eventBus = clientFactory.getEventBus();
 		navigationPanel = new NavigationPanel(clientFactory);
 		breadCrumbsPanel = new BreadCrumbsPanel(clientFactory);
-		projectManagerController = new ProjectManagerController(clientFactory);
-		projectDeployerController = new ProjectDeployerController(clientFactory);
-		iconPanel = new IconPanel(clientFactory);
 		initWidget(uiBinder.createAndBindUi(this));
 		RootLayoutPanel.get().add(this);
 		RootLayoutPanel.get().setStyleName(style.rootLayoutPanel());
+		projectDeployerController = new ProjectDeployerController(clientFactory);
+		projectManagerController = new ProjectManagerController(clientFactory);
+		iconPanel = new IconPanel(clientFactory);
 		registerHandlers();
 		startConsole();
 	}
@@ -90,6 +91,7 @@ public class ManagementConsole extends Composite {
 				showDeployer();
 			} else {
 				showIconPanel();
+				eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
 			}
 		} else {
 			showDeployer();
@@ -103,7 +105,6 @@ public class ManagementConsole extends Composite {
 	}
 	
 	private void manageProjects(String projectName){
-		//projectManagerController = ProjectManagerController.getInstance(clientFactory, projectName);
 		contentLayoutPanel.clear();
 		contentLayoutPanel.add(projectManagerController);
 		contentLayoutPanel.setVisible(true);

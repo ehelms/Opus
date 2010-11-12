@@ -37,7 +37,7 @@ public class ProjectManagerController extends Composite {
 	interface ProjectDashboardUiBinder extends UiBinder<Widget, ProjectManagerController> {}
 
 	private DashboardPanel dashboardPanel;
-//	private DeleteProjectPanel deleteProjectPanel;
+	private ProjectSettingsPanel projectSettingsPanel;
 	private AppSettingsPanel appSettingsPanel;
 	private EventBus eventBus;
 	private String projectName;
@@ -52,6 +52,7 @@ public class ProjectManagerController extends Composite {
 		this.eventBus = clientFactory.getEventBus();
 		this.dashboardPanel = new DashboardPanel(clientFactory);
 		this.appSettingsPanel = new AppSettingsPanel(clientFactory);
+		this.projectSettingsPanel = new ProjectSettingsPanel(clientFactory);
 		setupBreadCrumbs();
 		setupmanagerDeckPanel();
 		registerHandlers();
@@ -72,6 +73,8 @@ public class ProjectManagerController extends Composite {
 						} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD ){
 							projectName = event.name;
 							managerDeckPanel.showWidget(0);
+						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS) {
+							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
 						}
 					}
 			});
@@ -82,6 +85,8 @@ public class ProjectManagerController extends Composite {
 		dashboardPanel.setTitle("Dashboard");
 		managerDeckPanel.add(appSettingsPanel);
 		appSettingsPanel.setTitle("Application Settings");
+		managerDeckPanel.add(projectSettingsPanel);
+		projectSettingsPanel.setTitle("Project Settings");
 		managerDeckPanel.showWidget(0);
 	}
 }

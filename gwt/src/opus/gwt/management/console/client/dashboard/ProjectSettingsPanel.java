@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
 import opus.gwt.management.console.client.overlays.ProjectSettingsData;
 import opus.gwt.management.console.client.resources.FormsCss.FormsStyle;
@@ -12,10 +14,10 @@ import opus.gwt.management.console.client.tools.TooltipPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
-import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -45,55 +47,71 @@ public class ProjectSettingsPanel extends Composite {
 	private final String optionsUrl = "/deployments/projectName/confapps/";
 	
 	private String projectName;
+	private ClientFactory clientFactory;
 	private JSVariableHandler jsVarHandler;
+	private EventBus eventBus;
 	private boolean active;
 	private boolean hasSettings;
-	private ArrayList<String> textboxes;
 	private Project project;
 	private TooltipPanel tooltip;
 
 	@UiField Button saveButton;
 	@UiField Button activateButton;
-//	@UiField Label WarningLabel;
-//	@UiField ProjectManagerStyle style;
 	@UiField Label projectLabel;
 	@UiField FormsStyle form;
 	@UiField FlowPanel content;
 
 
-	public ProjectSettingsPanel(ClientFactory clientFactory, String projectName) {
+	public ProjectSettingsPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.projectName = projectName;
+		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
-		this.textboxes = new ArrayList<String>();
-		this.projectLabel.setText(projectName);
-		this.project = clientFactory.getProjects().get(projectName);
-		importProjectSettings(project.getAppSettings(), project.getApps());
+		this.eventBus = clientFactory.getEventBus();
+		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
 	}
 	
-	public void importProjectSettings(ProjectSettingsData settings, JsArrayString apps) {
+	private void registerHandlers() {
+		eventBus.addHandler(PanelTransitionEvent.TYPE, 
+				new PanelTransitionEventHandler(){
+					public void onPanelTransition(PanelTransitionEvent event){
+						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS){
+							projectLabel.setText(projectName + " settings");
+							importProjectSettings(project.getAppSettings());
+						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
+							projectName = event.name;
+							project = clientFactory.getProjects().get(projectName);
+						}
+					}
+			});
+	}
+	
+	public void importProjectSettings(ProjectSettingsData settings) {
+		content.clear();
 		content.setStyleName(form.content());
 		
-		for(int i = 0; i < apps.length() - 1; i++) {
-			JsArray<JavaScriptObject> appSettings = settings.getAppSettings(apps.get(i));
+		String[] appsWithSettings = project.getAppSettings().getApplicationSettings().split(";;;");
+		
+		for(int i = 0; i < appsWithSettings.length - 1; i++) {
+			JsArray<JavaScriptObject> appSettings = settings.getAppSettings(appsWithSettings[i]);
 			
 			FlowPanel formWrapper = new FlowPanel();
 			formWrapper.setStyleName(form.formWrapper());
-			
-			for(int j = 0; j < appSettings.length()-1; j++) {
+	
+			for(int j = 0; j < appSettings.length(); j++) {
 				FlowPanel field = new FlowPanel();
 				FlowPanel fieldWrapper = new FlowPanel();
 				fieldWrapper.setStyleName(form.fieldWrapper());
 				field.setStyleName(form.field());
 				
-				//String[] settingsArray = appSettings.join(";;").split(";;\\s*");
 				JsArray<JavaScriptObject> settingsArray = settings.getSettingsArray(appSettings.get(j));
+				String choiceSettings = settings.getChoiceSettingsArray(appSettings.get(j));
 				
 				String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
+				//String[] choiceSettingsContent = choiceSettingsArray.join(";;").split(";;\\s*");
 				
-				Label appName = new Label(apps.get(i));
+				Label appName = new Label(appsWithSettings[i]);
 				
 				Label description = new Label(settingsContent[0]);
 				description.setStyleName(form.settingsFieldLabel());
@@ -153,7 +171,7 @@ public class ProjectSettingsPanel extends Composite {
 					ListBox setting = new ListBox();
 					setting.setName(settingsContent[1]);
 					setting.setStyleName(form.greyBorder());
-					setting.getElement().setInnerHTML(settingsContent[3]);
+					setting.getElement().setInnerHTML(choiceSettings);
 					
 					field.add(setting);
 				} else if(settingsContent[2].equals("bool")) {
@@ -164,7 +182,7 @@ public class ProjectSettingsPanel extends Composite {
 						setting.setValue(Boolean.valueOf(settingsContent[3]));
 					}
 				}
-
+	
 				fieldWrapper.add(field);
 				formWrapper.add(fieldWrapper);
 			}
@@ -177,52 +195,10 @@ public class ProjectSettingsPanel extends Composite {
 		this.hasSettings = state;
 	}
 	
-	//ProjectManagerController.displayOptions() calls this function  
-//	public void setActive(boolean active){
-//		this.active = active;
-//		if(!active){
-//			if(hasSettings){
-//				WarningLabel.setText("You must fill out all the settings and click \"Save and Activate\" button in order start using project.");
-//			} else {
-//				WarningLabel.setText("This project is not active.  Press the Activate button to activate it.");
-//				ActivateButton.setText("Activate");
-//				SaveButton.setVisible(false);
-//			}
-//			WarningLabel.setStyleName(style.WarningLabel());
-//		} else {
-//			WarningLabel.setText("");
-//			ActivateButton.setText("Deactivate");
-//			SaveButton.setVisible(true);
-//			//Button.setText("Submit");
-//		}
-//	}
-	
-	private boolean validateForm(){
-		for(String t : textboxes){
-			//Window.alert(getValue(t));
-			if (DOM.getElementById(t).getInnerText().length() == 0) {
-				Window.alert("All settings are required.");
-				return false;
-			}
-		}
-		return true;
+	@UiHandler("saveButton")
+	void handleSaveButton(ClickEvent event) {
+		saveSettings();
 	}
-	
-	public final native String getValue(String id) /*-{ 
-		alert("hello");
-		return document.getElementById(id).value; }-*/;
-	
-//	@UiHandler("SaveButton")
-//	void handleSaveButton(ClickEvent event){
-//		if( validateForm() ){
-//
-//			//formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
-//			optionsForm.add(formContainer);
-//			//optionsForm.submit();
-//			
-//			saveSettings();
-//		}
-//	}
 	
 	@UiHandler("activateButton")
 	void handleActivateButton(ClickEvent event){

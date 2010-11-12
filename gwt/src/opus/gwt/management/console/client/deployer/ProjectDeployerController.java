@@ -143,6 +143,7 @@ public class ProjectDeployerController extends Composite {
 		appBrowserPanel.reset();
 		databaseOptionsPanel.reset();
 		deploymentOptionsPanel.reset();
+		setupBreadCrumbs();
 		deployerDeckPanel.showWidget(0);
 		currentPanelIndex = 0;
 	}

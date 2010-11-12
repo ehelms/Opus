@@ -69,7 +69,7 @@ public class IconPanel extends Composite {
 		iconMap = new HashMap<String, Integer>();
 		desc = DescriptionPanel.getInstance();
 		registerHandlers();
-		//setupBreadCrumbs();
+		setupBreadCrumbs();
 		setAppDescPanelInitialState();
 		handleProjects();
 	}
@@ -142,6 +142,7 @@ public class IconPanel extends Composite {
 				desc.hide();
 			}
 		});
+		
 		testLabel.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	        	testLabel.setStyleName(style.projectIcon());

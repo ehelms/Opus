@@ -191,52 +191,10 @@ public class AppSettingsPanel extends Composite {
 		this.hasSettings = state;
 	}
 	
-	//ProjectManagerController.displayOptions() calls this function  
-//	public void setActive(boolean active){
-//		this.active = active;
-//		if(!active){
-//			if(hasSettings){
-//				WarningLabel.setText("You must fill out all the settings and click \"Save and Activate\" button in order start using project.");
-//			} else {
-//				WarningLabel.setText("This project is not active.  Press the Activate button to activate it.");
-//				ActivateButton.setText("Activate");
-//				SaveButton.setVisible(false);
-//			}
-//			WarningLabel.setStyleName(style.WarningLabel());
-//		} else {
-//			WarningLabel.setText("");
-//			ActivateButton.setText("Deactivate");
-//			SaveButton.setVisible(true);
-//			//Button.setText("Submit");
-//		}
-//	}
-	
-//	private boolean validateForm(){
-//		for(String t : textboxes){
-//			//Window.alert(getValue(t));
-//			if (DOM.getElementById(t).getInnerText().length() == 0) {
-//				Window.alert("All settings are required.");
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-	
-	public final native String getValue(String id) /*-{ 
-		alert("hello");
-		return document.getElementById(id).value; }-*/;
-	
-//	@UiHandler("SaveButton")
-//	void handleSaveButton(ClickEvent event){
-//		if( validateForm() ){
-//
-//			//formContainer.setWidget(formContainer.getRowCount(), 0, new Hidden("csrfmiddlewaretoken", jsVarHandler.getCSRFTokenURL()));
-//			optionsForm.add(formContainer);
-//			//optionsForm.submit();
-//			
-//			saveSettings();
-//		}
-//	}
+	@UiHandler("saveButton")
+	void handleSaveButton(ClickEvent event) {
+		saveSettings();
+	}
 	
 	@UiHandler("activateButton")
 	void handleActivateButton(ClickEvent event){

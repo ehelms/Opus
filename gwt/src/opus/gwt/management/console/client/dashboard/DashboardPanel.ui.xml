@@ -33,7 +33,6 @@
 				</HTMLPanel>
 			</g:HTMLPanel>
 			<g:FlowPanel ui:field='applicationsFlowPanel' />
-			<g:Button ui:field='settingsButton' >Settings</g:Button>
 			<g:FormPanel ui:field="optionsForm" />
 			<g:FlexTable ui:field="formContainer" />
 			<g:PopupPanel ui:field="deletePopupPanel" styleName="{style.deletePopupPanel}">

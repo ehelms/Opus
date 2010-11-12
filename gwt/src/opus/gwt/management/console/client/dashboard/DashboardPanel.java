@@ -76,7 +76,6 @@ public class DashboardPanel extends Composite {
 	private FormPanel deleteForm;
 	
 	@UiField FlowPanel applicationsFlowPanel;
-	@UiField Button settingsButton;
 	@UiField ManagementConsoleControllerStyle manager;
 	@UiField Label projectLabel;
 	@UiField Button activeButton;
@@ -111,11 +110,6 @@ public class DashboardPanel extends Composite {
 						}
 					}
 			});
-	}
-	
-	@UiHandler("settingsButton")
-	void onSettingsButtonClick(ClickEvent event){
-		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.SETTINGS, "worklog"));
 	}
 	
 	@UiHandler("activeButton")
@@ -266,12 +260,20 @@ public class DashboardPanel extends Composite {
 			Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
 				@Override
 				public void onResponseReceived(Request request, Response response) {
-					Window.alert("Success!\n" + response.getText());
+					if(response.getStatusCode() == 200) {
+						Project project = clientFactory.getProjects().get(projectName);
+						
+						if(!project.isActive()) {
+							String[] appsWithSettings = project.getAppSettings().getApplicationSettings().split(";;;");
+							
+							eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS));
+						}
+					}
 				}
 
 				@Override
 				public void onError(Request request, Throwable exception) {
-					Window.alert("Error!" + exception.getMessage());
+					Window.alert("Sorry, could not save settings at the moment.");
 				}
 			});
 		} catch (RequestException e) {

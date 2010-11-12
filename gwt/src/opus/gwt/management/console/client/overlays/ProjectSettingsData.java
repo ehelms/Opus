@@ -58,7 +58,7 @@ public class ProjectSettingsData extends JavaScriptObject{
 			
 			choiceSettings = options;
 			
-			return choiceSettings;
+			return choiceSettings;	
 		}
 		
 		return "";
@@ -74,7 +74,7 @@ public class ProjectSettingsData extends JavaScriptObject{
 	
 	public final native int getNumberOfApplications() /*-{
 		var size = 0;
-		for (app in app.settings) {
+		for (app in this) {
 			size++;
 		}
 		return size;
