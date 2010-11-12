@@ -135,6 +135,7 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("destroyButton")
 	void onDestroyButtonClick(ClickEvent event) {
+		clientFactory.getProjects().remove(projectName);
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
 		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
@@ -271,10 +272,10 @@ public class DashboardPanel extends Composite {
 				public void onResponseReceived(Request request, Response response) {
 					if(response.getText().contains("Project deactivated")) {
 						setActive(false);
-//						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+						//eventBus.fireEvent(new UpdateProjectEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 					} else if(response.getText().contains("Project activated")) {
 						setActive(true);
-//						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+						//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 //						Project project = clientFactory.getProjects().get(projectName);
 //						
 //						if(!project.isActive()) {
@@ -303,6 +304,7 @@ public class DashboardPanel extends Composite {
 		}
 		
 		this.active = active;
+		handleProjectInformation(projectName);
 	}
 	
 	private void setDeletePopupPanelInitialState() {
