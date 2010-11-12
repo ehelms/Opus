@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.deployer.ErrorPanel;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
@@ -202,30 +203,34 @@ public class AppSettingsPanel extends Composite {
 	}
 	
 	private void saveSettings(){
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, optionsUrl.replaceAll("projectName", this.projectName));
+		StringBuffer formBuilder = new StringBuffer();
+	    formBuilder.append("csrfmiddlewaretoken=");
+		formBuilder.append(URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
+		
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 		
-	    StringBuffer formBuilder = new StringBuffer();
-	    
-	    formBuilder.append("csrfmiddlewaretoken=");
-		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
-		
 	    try {
-		      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
+	    	Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
 		        public void onError(Request request, Throwable exception) {
 		        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
 		        }
 
 		        public void onResponseReceived(Request request, Response response) {
-			    	if( response.getText().contains("") ){
-			    	
+			    	if(response.getText().contains("Settings saved")) {
+			    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+			    		Window.alert("Settings saved");
 			    	} else {
-			    	
+			    		ErrorPanel ep = new ErrorPanel(clientFactory);
+			    		ep.errorHTML.setHTML(response.getText());
+			    		content.clear();
+			    		content.add(ep);
 			    	}
-		        }});
-		    } catch (RequestException e) {
-		    	
-		    }
+		        }
+	    	});
+	    } catch (RequestException e) {
+	    	
+	    }
 	}
 	
 	/**
