@@ -270,9 +270,11 @@ public class DashboardPanel extends Composite {
 				@Override
 				public void onResponseReceived(Request request, Response response) {
 					if(response.getText().contains("Project deactivated")) {
-						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+						setActive(false);
+//						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 					} else if(response.getText().contains("Project activated")) {
-						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+						setActive(true);
+//						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 //						Project project = clientFactory.getProjects().get(projectName);
 //						
 //						if(!project.isActive()) {
@@ -291,6 +293,16 @@ public class DashboardPanel extends Composite {
 		} catch (RequestException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void setActive(boolean active) {
+		if(active) {
+			activeButton.setText("Deactivate project");
+		} else {
+			activeButton.setText("Activate project");
+		}
+		
+		this.active = active;
 	}
 	
 	private void setDeletePopupPanelInitialState() {

@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = 'BE9CFF1E05EBE148CD511B2206D914B6';
+var $strongName = '9AA9A41736E5B18491D1CE5F6485875B';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -13223,6 +13223,11 @@ function $onDestroyButtonClick(this$static){
   $hide(this$static.deletePopupPanel);
 }
 
+function $setActive(this$static, active){
+  active?(this$static.activeButton.element.textContent = 'Deactivate project' , undefined):(this$static.activeButton.element.textContent = 'Activate project' , undefined);
+  this$static.active_0 = active;
+}
+
 function $setProjectStatus(this$static, active){
   var $e0, builder, e, formBuilder;
   formBuilder = new StringBuffer_0;
@@ -13313,6 +13318,8 @@ _.getClass$ = function getClass_312(){
   return Lopus_gwt_management_console_client_dashboard_DashboardPanel$2_2_classLit;
 }
 ;
+--></script>
+<script><!--
 _.castableTypeMap$ = {18:1, 37:1, 38:1};
 _.this$0 = null;
 function DashboardPanel$3_0(this$0, val$deletedProject){
@@ -13323,8 +13330,6 @@ function DashboardPanel$3_0(this$0, val$deletedProject){
 function DashboardPanel$3(){
 }
 
---></script>
-<script><!--
 _ = DashboardPanel$3_0.prototype = DashboardPanel$3.prototype = new Object_0;
 _.getClass$ = function getClass_313(){
   return Lopus_gwt_management_console_client_dashboard_DashboardPanel$3_2_classLit;
@@ -13486,10 +13491,10 @@ _.onError = function onError_1(request, exception){
 _.onResponseReceived = function onResponseReceived_1(request, response){
   var ep;
   if (response.val$xmlHttpRequest.responseText.indexOf('Project deactivated') != -1) {
-    $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_2(($clinit_708() , DASHBOARD), this.this$0.projectName));
+    $setActive(this.this$0, false);
   }
    else if (response.val$xmlHttpRequest.responseText.indexOf('Project activated') != -1) {
-    $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_2(($clinit_708() , DASHBOARD), this.this$0.projectName));
+    $setActive(this.this$0, true);
   }
    else {
     ep = new ErrorPanel_0;
