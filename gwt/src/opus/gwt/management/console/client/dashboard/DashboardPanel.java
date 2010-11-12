@@ -107,6 +107,7 @@ public class DashboardPanel extends Composite {
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
 							projectName = event.name;
 							projectLabel.setText(projectName);
+							active = clientFactory.getProjects().get(projectName).isActive();
 							handleProjectInformation(projectName);
 						}
 					}
@@ -115,7 +116,7 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("activeButton")
 	void onDeactivateButtonClick(ClickEvent event) {
-		setProjectStatus(!clientFactory.getProjects().get(projectName).isActive());
+		setProjectStatus(!active);
 	}
 	
 	@UiHandler("deleteButton")
@@ -160,7 +161,6 @@ public class DashboardPanel extends Composite {
 		final Project project = clientFactory.getProjects().get(projectName);
 		HashMap<String, Application> applicationsMap = clientFactory.getApplications();
 		JsArrayString applicationsArray = project.getApps();
-		active = project.isActive();
 		
 		if(active) {
 			activeButton.setText("Deactivate project");
@@ -254,7 +254,7 @@ public class DashboardPanel extends Composite {
 		formBuilder.append( URL.encodeQueryString(JSVarHandler.getCSRFTokenURL()));
 		formBuilder.append("&active=" + active);
 		
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/");
 		builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 		
 		try {

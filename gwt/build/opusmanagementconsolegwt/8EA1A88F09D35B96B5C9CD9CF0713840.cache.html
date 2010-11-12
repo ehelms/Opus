@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '1FE4B23F78A0CEC9D151AB010F46E03D';
+var $strongName = '8EA1A88F09D35B96B5C9CD9CF0713840';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -13583,7 +13583,6 @@ function $handleProjectInformation(this$static, projectName){
   project = dynamicCastJso($get_3(this$static.clientFactory.projects, projectName));
   applicationsMap = this$static.clientFactory.applications;
   applicationsArray = project.apps;
-  this$static.active_0 = project.active;
   this$static.active_0?(this$static.activeButton.element.innerText = 'Deactivate project' , undefined):(this$static.activeButton.element.innerText = 'Activate project' , undefined);
   for (i = 0; i < applicationsArray.length - 1; ++i) {
     app_0 = dynamicCastJso($get_3(applicationsMap, applicationsArray[i]));
@@ -13614,7 +13613,7 @@ function $handleProjectInformation(this$static, projectName){
 }
 
 function $onDeactivateButtonClick(this$static){
-  $setProjectStatus(this$static, !dynamicCastJso($get_3(this$static.clientFactory.projects, this$static.projectName)).active);
+  $setProjectStatus(this$static, !this$static.active_0);
 }
 
 function $onDeleteButtonClick(this$static){
@@ -13644,7 +13643,7 @@ function $setProjectStatus(this$static, active){
   $append(formBuilder.data, 'csrfmiddlewaretoken=');
   $append_2(formBuilder, encodeQueryString($wnd.csrftoken));
   $append(formBuilder.data, '&active=' + active);
-  builder = new RequestBuilder_0(($clinit_154() , POST), '/deployments/' + this$static.projectName + '/confapps');
+  builder = new RequestBuilder_0(($clinit_154() , POST), '/deployments/' + this$static.projectName + '/');
   $setHeader(builder);
   try {
     $sendRequest(builder, $toString_0(formBuilder.data), new DashboardPanel$9_0(this$static));
@@ -13709,6 +13708,7 @@ _.onPanelTransition = function onPanelTransition_1(event_0){
   if (event_0.transitionType == ($clinit_718() , DASHBOARD)) {
     this.this$0.projectName = event_0.name_0;
     $setTextOrHtml(this.this$0.projectLabel, this.this$0.projectName, false);
+    this.this$0.active_0 = dynamicCastJso($get_3(this.this$0.clientFactory.projects, this.this$0.projectName)).active;
     $handleProjectInformation(this.this$0, this.this$0.projectName);
   }
 }
