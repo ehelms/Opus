@@ -29,6 +29,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -75,8 +76,10 @@ public class AuthenticationPanel extends Composite {
 		if( !success ){
   		  if( firstLoginAttempt )
 	    	  		firstLoginAttempt = false;
+  		  Window.alert("Fialed login");
   		  loginFailed();
   	  } else {
+  		Window.alert("Succeed Login");
   		  loginSucceeded();
   	  }
 	}
@@ -93,7 +96,7 @@ public class AuthenticationPanel extends Composite {
 	
 	private void loginSucceeded(){
 		loggedIn = true;
-		ManagementConsole mcc = new ManagementConsole(clientFactory);
+		ManagementConsoleController mcc = new ManagementConsoleController(clientFactory);
 	}
 	
 	private void submitLogin(){
