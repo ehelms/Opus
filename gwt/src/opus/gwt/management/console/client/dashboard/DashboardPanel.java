@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.deployer.ErrorPanel;
 import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
@@ -52,13 +53,13 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 
 public class DashboardPanel extends Composite {
 
@@ -258,22 +259,33 @@ public class DashboardPanel extends Composite {
 		
 		try {
 			Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
+				public void onError(Request request, Throwable exception) {
+		        	ErrorPanel ep = new ErrorPanel(clientFactory);
+		    		ep.errorHTML.setHTML("<p>Error Occured</p>");
+		    		applicationsFlowPanel.clear();
+		    		applicationsFlowPanel.add(ep);
+		    		//applicationsFlowPanel.showWidget(applicationsFlowPanel.getWidgetIndex(ep));
+		        }
+				
 				@Override
 				public void onResponseReceived(Request request, Response response) {
-					if(response.getStatusCode() == 200) {
-						Project project = clientFactory.getProjects().get(projectName);
-						
-						if(!project.isActive()) {
-							String[] appsWithSettings = project.getAppSettings().getApplicationSettings().split(";;;");
-							
-							eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS));
-						}
+					if(response.getText().contains("Project deactivated")) {
+						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+					} else if(response.getText().contains("Project activated")) {
+						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+//						Project project = clientFactory.getProjects().get(projectName);
+//						
+//						if(!project.isActive()) {
+//							String[] appsWithSettings = project.getAppSettings().getApplicationSettings().split(";;;");
+//							
+//							eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS));
+//						}
+					} else {
+						ErrorPanel ep = new ErrorPanel(clientFactory);
+			    		ep.errorHTML.setHTML(response.getText());
+			    		applicationsFlowPanel.clear();
+			    		applicationsFlowPanel.add(ep);
 					}
-				}
-
-				@Override
-				public void onError(Request request, Throwable exception) {
-					Window.alert("Sorry, could not save settings at the moment.");
 				}
 			});
 		} catch (RequestException e) {

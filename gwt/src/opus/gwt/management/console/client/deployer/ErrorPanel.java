@@ -30,7 +30,8 @@ public class ErrorPanel extends Composite {
 	private static ConfirmBuildProjectUiBinder uiBinder = GWT.create(ConfirmBuildProjectUiBinder.class);
 	interface ConfirmBuildProjectUiBinder extends UiBinder<Widget, ErrorPanel> {}
 	
-	@UiField HTML errorHTML;
+	@UiField
+	public HTML errorHTML;
 	
 	public ErrorPanel(ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));

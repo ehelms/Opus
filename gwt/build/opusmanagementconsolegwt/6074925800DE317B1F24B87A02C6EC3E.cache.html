@@ -4,7 +4,7 @@ var $gwt_version = "2.1.0RC1";
 var $wnd = parent;
 var $doc = $wnd.document;
 var $moduleName, $moduleBase;
-var $strongName = '3B777D0BCA515F9E29B7FF9EC976189A';
+var $strongName = '6074925800DE317B1F24B87A02C6EC3E';
 var $stats = $wnd.__gwtStatsEvent ? function(a) {return $wnd.__gwtStatsEvent(a);} : null,
 $sessionId = $wnd.__gwtStatsSessionId ? $wnd.__gwtStatsSessionId : null;
 $stats && $stats({moduleName:'opusmanagementconsolegwt',sessionId:$sessionId,subSystem:'startup',evtGroup:'moduleStartup',millis:(new Date()).getTime(),type:'moduleEvalStart'});
@@ -13648,17 +13648,26 @@ _.getClass$ = function getClass_321(){
 }
 ;
 _.onError = function onError_1(request, exception){
-  $wnd.alert('Sorry, could not save settings at the moment.');
+  var ep;
+  ep = new ErrorPanel_0;
+  $setTextOrHtml(ep.errorHTML, '<p>Error Occured<\/p>', true);
+  $clear_0(this.this$0.applicationsFlowPanel);
+  $add_2(this.this$0.applicationsFlowPanel, ep);
 }
 ;
 _.onResponseReceived = function onResponseReceived_1(request, response){
-  var project;
-  if (response.val$xmlHttpRequest.status == 200) {
-    project = dynamicCastJso($get_3(this.this$0.clientFactory.projects, this.this$0.projectName));
-    if (!project.active) {
-      $split($getApplicationSettings(project.appsettings), ';;;', 0);
-      $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_1(($clinit_712() , PROJECTSETTINGS)));
-    }
+  var ep;
+  if (response.val$xmlHttpRequest.responseText.indexOf('Project deactivated') != -1) {
+    $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_2(($clinit_712() , DASHBOARD), this.this$0.projectName));
+  }
+   else if (response.val$xmlHttpRequest.responseText.indexOf('Project activated') != -1) {
+    $fireEvent_0(this.this$0.eventBus, new PanelTransitionEvent_2(($clinit_712() , DASHBOARD), this.this$0.projectName));
+  }
+   else {
+    ep = new ErrorPanel_0;
+    $setTextOrHtml(ep.errorHTML, response.val$xmlHttpRequest.responseText, true);
+    $clear_0(this.this$0.applicationsFlowPanel);
+    $add_2(this.this$0.applicationsFlowPanel, ep);
   }
 }
 ;
