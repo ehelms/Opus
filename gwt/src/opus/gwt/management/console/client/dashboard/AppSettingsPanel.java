@@ -55,6 +55,8 @@ public class AppSettingsPanel extends Composite {
 	private boolean hasSettings;
 	private Project project;
 	private TooltipPanel tooltip;
+	private String appName;
+	private StringBuffer postData;
 
 	@UiField Button saveButton;
 	@UiField Button activateButton;
@@ -68,6 +70,7 @@ public class AppSettingsPanel extends Composite {
 		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
+		this.postData = new StringBuffer();
 		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
@@ -78,8 +81,9 @@ public class AppSettingsPanel extends Composite {
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
-							projectLabel.setText(projectName + " settings: " + event.name);
-							importProjectSettings(project.getAppSettings(), event.name);
+							appName = event.name;
+							projectLabel.setText(projectName + " settings: " + appName);
+							importProjectSettings(project.getAppSettings(), appName);
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
 							projectName = event.name;
 							project = clientFactory.getProjects().get(projectName);
@@ -112,6 +116,7 @@ public class AppSettingsPanel extends Composite {
 			Label appName = new Label(application);
 			
 			Label description = new Label(settingsContent[0]);
+			description.setTitle(settingsContent[0]);
 			description.setStyleName(form.settingsFieldLabel());
 			field.add(description);
 			
@@ -138,7 +143,8 @@ public class AppSettingsPanel extends Composite {
 						setTooltipText(setting.getName());
 					}
 				});
-				
+
+				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getText());
 				field.add(setting);
 			} else if(settingsContent[2].equals("int")) {
 				final TextBox setting = new TextBox();
@@ -164,6 +170,7 @@ public class AppSettingsPanel extends Composite {
 					}
 				});
 				
+				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getText());
 				field.add(setting);
 			} else if(settingsContent[2].equals("choice")) {
 				ListBox setting = new ListBox();
@@ -171,6 +178,7 @@ public class AppSettingsPanel extends Composite {
 				setting.setStyleName(form.greyBorder());
 				setting.getElement().setInnerHTML(choiceSettings);
 				
+				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getValue(setting.getSelectedIndex()));
 				field.add(setting);
 			} else if(settingsContent[2].equals("bool")) {
 				CheckBox setting = new CheckBox();
@@ -179,6 +187,8 @@ public class AppSettingsPanel extends Composite {
 				if (settingsContent.length > 3) {
 					setting.setValue(Boolean.valueOf(settingsContent[3]));
 				}
+				
+				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getFormValue());
 			}
 
 			fieldWrapper.add(field);
@@ -206,6 +216,8 @@ public class AppSettingsPanel extends Composite {
 		StringBuffer formBuilder = new StringBuffer();
 	    formBuilder.append("csrfmiddlewaretoken=");
 		formBuilder.append(URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
+		formBuilder.append(postData.toString());
+		Window.alert(postData.toString());
 		
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
@@ -231,6 +243,8 @@ public class AppSettingsPanel extends Composite {
 	    } catch (RequestException e) {
 	    	
 	    }
+	    
+	    postData = new StringBuffer();
 	}
 	
 	/**
