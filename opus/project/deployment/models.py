@@ -349,7 +349,8 @@ class DeployedProject(models.Model):
         except Exception, e:
             log.warning("Ignoring this error when trying to delete postgres user: %s", e)
 
-        destroyer.remove_projectdir()
+        destroyer.remove_projectdir(
+                secureops=settings.OPUS_SECUREOPS_COMMAND)
 
         if self.id is not None:
             self.delete()
