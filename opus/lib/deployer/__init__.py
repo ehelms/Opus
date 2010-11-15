@@ -817,8 +817,12 @@ class ProjectUndeployer(object):
 
 
 
-    def remove_projectdir(self):
+    def remove_projectdir(self, secureops="secureops"):
         """Deletes the entire project directory off the filesystem"""
         log.info("Removing project directory for project %s", self.projectdir)
         if os.path.exists(self.projectdir):
-            shutil.rmtree(self.projectdir)
+            process = subprocess.Popen([secureops, "-g", self.projectdir],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT)
+            output = process.communicate()[0]
+            ret = process.wait()
