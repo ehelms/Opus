@@ -1,6 +1,6 @@
 package opus.gwt.management.console.client.dashboard;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
@@ -15,7 +15,10 @@ import opus.gwt.management.console.client.tools.TooltipPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -28,7 +31,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -56,7 +58,7 @@ public class AppSettingsPanel extends Composite {
 	private Project project;
 	private TooltipPanel tooltip;
 	private String appName;
-	private StringBuffer postData;
+	private HashMap<String, String> formData;
 
 	@UiField Button saveButton;
 	@UiField Button activateButton;
@@ -70,7 +72,7 @@ public class AppSettingsPanel extends Composite {
 		this.clientFactory = clientFactory;
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
-		this.postData = new StringBuffer();
+		this.formData = new HashMap<String, String>();
 		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
@@ -102,10 +104,10 @@ public class AppSettingsPanel extends Composite {
 		formWrapper.setStyleName(form.formWrapper());
 
 		for(int j = 0; j < appSettings.length(); j++) {
-			FlowPanel field = new FlowPanel();
+			FlowPanel fields = new FlowPanel();
 			FlowPanel fieldWrapper = new FlowPanel();
 			fieldWrapper.setStyleName(form.fieldWrapper());
-			field.setStyleName(form.field());
+			fields.setStyleName(form.field());
 			
 			JsArray<JavaScriptObject> settingsArray = settings.getSettingsArray(appSettings.get(j));
 			String choiceSettings = settings.getChoiceSettingsArray(appSettings.get(j));
@@ -115,38 +117,12 @@ public class AppSettingsPanel extends Composite {
 			
 			Label appName = new Label(application);
 			
-			Label description = new Label(settingsContent[0]);
+			final Label description = new Label(settingsContent[0]);
 			description.setTitle(settingsContent[0]);
 			description.setStyleName(form.settingsFieldLabel());
-			field.add(description);
+			fields.add(description);
 			
-			if(settingsContent[2].equals("string")) {
-				final TextBox setting = new TextBox();
-				setting.setName(settingsContent[1]);
-				setting.setStyleName(form.greyBorder());
-				
-				if(settingsContent.length > 3) {
-					setting.setText(settingsContent[3]);
-				}
-				
-				setting.addFocusHandler(new FocusHandler() {
-					public void onFocus(FocusEvent event) {
-						tooltip.hide();
-						tooltip.setVisible(true);
-						
-						int x = getTooltipPosition(setting)[0];
-						int y = getTooltipPosition(setting)[1];
-							
-						tooltip.setGray();
-						setTooltipPosition(x, y);
-						tooltip.show();
-						setTooltipText(setting.getName());
-					}
-				});
-
-				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getText());
-				field.add(setting);
-			} else if(settingsContent[2].equals("int")) {
+			if(settingsContent[2].equals("string") || settingsContent[2].equals("int")) {
 				final TextBox setting = new TextBox();
 				setting.setName(settingsContent[1]);
 				setting.setStyleName(form.greyBorder());
@@ -170,28 +146,50 @@ public class AppSettingsPanel extends Composite {
 					}
 				});
 				
-				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getText());
-				field.add(setting);
+				setting.addChangeHandler(new ChangeHandler() {
+					public void onChange(ChangeEvent event) {
+						formData.remove(description.getText());
+						formData.put(description.getText(), setting.getText());
+					}
+				});
+				
+				formData.put(description.getText(), setting.getValue());
+				fields.add(setting);
 			} else if(settingsContent[2].equals("choice")) {
-				ListBox setting = new ListBox();
+				final ListBox setting = new ListBox();
 				setting.setName(settingsContent[1]);
 				setting.setStyleName(form.greyBorder());
 				setting.getElement().setInnerHTML(choiceSettings);
 				
-				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getValue(setting.getSelectedIndex()));
-				field.add(setting);
+				setting.addChangeHandler(new ChangeHandler() {
+					public void onChange(ChangeEvent event) {
+						formData.remove(description.getText());
+						formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+					}
+				});
+				
+				formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+				fields.add(setting);
 			} else if(settingsContent[2].equals("bool")) {
-				CheckBox setting = new CheckBox();
+				final CheckBox setting = new CheckBox();
 				setting.setName(settingsContent[1]);
 				
 				if (settingsContent.length > 3) {
 					setting.setValue(Boolean.valueOf(settingsContent[3]));
 				}
 				
-				postData.append("&" + this.appName + "-" + description.getTitle() + "=" + setting.getFormValue());
+				setting.addClickHandler(new ClickHandler() {
+					public void onClick(ClickEvent event) {
+						formData.remove(description.getText());
+						formData.put(description.getText(), setting.getValue().toString());
+					}
+				});
+				
+				formData.put(description.getText(), setting.getValue().toString());
+				fields.add(setting);
 			}
 
-			fieldWrapper.add(field);
+			fieldWrapper.add(fields);
 			formWrapper.add(fieldWrapper);
 		}
 		
@@ -216,8 +214,10 @@ public class AppSettingsPanel extends Composite {
 		StringBuffer formBuilder = new StringBuffer();
 	    formBuilder.append("csrfmiddlewaretoken=");
 		formBuilder.append(URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
-		formBuilder.append(postData.toString());
-		Window.alert(postData.toString());
+		
+		for(String key : formData.keySet()) {
+			formBuilder.append("&" + projectName + "-" + key + "=" + formData.get(key));
+		}
 		
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
@@ -231,7 +231,6 @@ public class AppSettingsPanel extends Composite {
 		        public void onResponseReceived(Request request, Response response) {
 			    	if(response.getText().contains("Settings saved")) {
 			    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
-			    		Window.alert("Settings saved");
 			    	} else {
 			    		ErrorPanel ep = new ErrorPanel(clientFactory);
 			    		ep.errorHTML.setHTML(response.getText());
@@ -244,7 +243,6 @@ public class AppSettingsPanel extends Composite {
 	    	
 	    }
 	    
-	    postData = new StringBuffer();
 	}
 	
 	/**
