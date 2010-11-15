@@ -243,6 +243,7 @@ public class AppSettingsPanel extends Composite {
 	    	
 	    }
 	    
+	    formData = new HashMap<String, String>();
 	}
 	
 	/**
