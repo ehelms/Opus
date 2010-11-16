@@ -29,6 +29,7 @@ import opus.gwt.management.console.client.event.ImportAppListEvent;
 import opus.gwt.management.console.client.event.UpdateApplicationEvent;
 import opus.gwt.management.console.client.event.UpdateDBOptionsEvent;
 import opus.gwt.management.console.client.event.UpdateFeaturedListEvent;
+import opus.gwt.management.console.client.event.UpdateProjectEvent;
 import opus.gwt.management.console.client.event.UpdateVersionEvent;
 
 import com.google.gwt.core.client.JavaScriptObject;
@@ -75,6 +76,7 @@ public class ServerCommunicator {
 		URLS.put("getProjects", JSvarHandler.getDeployerBaseURL() + projectURL);
 		URLS.put("getApplications", JSvarHandler.getRepoBaseURL() + applicationURL);
 		URLS.put("getDjangoPackages", JSvarHandler.getRepoBaseURL() + djangoPackagesURL);
+		URLS.put("updateProject", JSvarHandler.getDeployerBaseURL() + projectURL);
 	}
 	
 	private void registerHandlers(){
@@ -139,7 +141,6 @@ public class ServerCommunicator {
 				return;	
 			}
 	    } else {
-	    	
 		    if (queryType.equals("getUser")) {
 		    	eventBus.fireEvent(new GetUserEvent(jso));
 		    } else if (queryType.equals("handleApplication")) {
@@ -160,6 +161,8 @@ public class ServerCommunicator {
 		    	eventBus.fireEvent(new GetApplicationsEvent(jso));
 		    } else if(queryType.equals("getDjangoPackages")) {
 		    	eventBus.fireEvent(new GetDjangoPackagesEvent(jso));
+		    } else if(queryType.equals("updateProject")) {
+		    	eventBus.fireEvent(new UpdateProjectEvent(jso));
 		    }
 	    }
 	}

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.deployer.ErrorPanel;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
@@ -244,6 +245,7 @@ public class AppSettingsPanel extends Composite {
 	    }
 	    
 	    formData = new HashMap<String, String>();
+	    eventBus.fireEvent(new AsyncRequestEvent("updateProject", projectName));
 	}
 	
 	/**
