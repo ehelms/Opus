@@ -11,10 +11,18 @@ import com.google.gwt.event.shared.GwtEvent;
 public class UpdateProjectEvent extends GwtEvent<UpdateProjectEventHandler> {
 	
 	public static Type<UpdateProjectEventHandler> TYPE = new Type<UpdateProjectEventHandler>();
-	private JsArray<Project> project;
+	private Project project;
 	
 	public UpdateProjectEvent(JavaScriptObject projectInfo) {
 		this.project = ConvertProjectInfo(projectInfo);
+	}
+	
+	public String getProjectName() {
+		return project.getName();
+	}
+	
+	public Project getProject() {
+		return project;
 	}
 	
   	@Override
@@ -24,10 +32,10 @@ public class UpdateProjectEvent extends GwtEvent<UpdateProjectEventHandler> {
 
   	@Override
   	protected void dispatch(UpdateProjectEventHandler handler) {
-	  handler.onUpdateProjectInfo(this);
+	  handler.onUpdateProject(this);
   	}
   	
-  	public final native JsArray<Project> ConvertProjectInfo(JavaScriptObject jso) /*-{
+  	public final native Project ConvertProjectInfo(JavaScriptObject jso) /*-{
 		return jso;
 	}-*/;
 }

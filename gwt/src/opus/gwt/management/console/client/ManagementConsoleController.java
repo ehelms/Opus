@@ -14,9 +14,10 @@ import opus.gwt.management.console.client.event.GetProjectsEventHandler;
 import opus.gwt.management.console.client.event.GetUserEvent;
 import opus.gwt.management.console.client.event.GetUserEventHandler;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
+import opus.gwt.management.console.client.event.UpdateProjectEvent;
+import opus.gwt.management.console.client.event.UpdateProjectEventHandler;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
 
 
 public class ManagementConsoleController {
@@ -83,6 +84,13 @@ public class ManagementConsoleController {
 					public void onDeleteProject(DeleteProjectEvent event) {
 						clientFactory.getProjects().remove(event.getProjectName());
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTS));
+					}
+		});
+		eventBus.addHandler(UpdateProjectEvent.TYPE,
+				new UpdateProjectEventHandler() {
+					public void onUpdateProject(UpdateProjectEvent event) {
+						clientFactory.getProjects().remove(event.getProjectName());
+						clientFactory.getProjects().put(event.getProjectName(), event.getProject());
 					}
 		});
 	}
