@@ -74,6 +74,7 @@ public class AppSettingsPanel extends Composite {
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
 		this.formData = new HashMap<String, String>();
+		this.projectName = "";
 		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
