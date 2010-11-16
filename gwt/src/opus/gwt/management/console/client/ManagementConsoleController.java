@@ -18,6 +18,7 @@ import opus.gwt.management.console.client.event.UpdateProjectEvent;
 import opus.gwt.management.console.client.event.UpdateProjectEventHandler;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 
 
 public class ManagementConsoleController {

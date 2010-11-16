@@ -83,13 +83,11 @@ public class AppSettingsPanel extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
-						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
+						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS) {
 							appName = event.name;
+							project = clientFactory.getProjects().get(projectName);
 							projectLabel.setText(projectName + " settings: " + appName);
 							importProjectSettings(project.getAppSettings(), appName);
-						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
-							projectName = event.name;
-							project = clientFactory.getProjects().get(projectName);
 						}
 					}
 			});
