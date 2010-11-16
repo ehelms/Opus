@@ -245,6 +245,10 @@ public class AppSettingsPanel extends Composite {
 	    }
 	}
 	
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	
 	/**
 	 * Set the tooltips initial state on page load
 	 */
