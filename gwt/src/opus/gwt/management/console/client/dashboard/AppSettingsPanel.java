@@ -231,6 +231,8 @@ public class AppSettingsPanel extends Composite {
 
 		        public void onResponseReceived(Request request, Response response) {
 			    	if(response.getText().contains("Settings saved")) {
+			    		formData = new HashMap<String, String>();
+			    	    eventBus.fireEvent(new AsyncRequestEvent("updateProject", projectName));
 			    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 			    	} else {
 			    		ErrorPanel ep = new ErrorPanel(clientFactory);
@@ -243,9 +245,6 @@ public class AppSettingsPanel extends Composite {
 	    } catch (RequestException e) {
 	    	
 	    }
-	    
-	    formData = new HashMap<String, String>();
-	    eventBus.fireEvent(new AsyncRequestEvent("updateProject", projectName));
 	}
 	
 	/**
