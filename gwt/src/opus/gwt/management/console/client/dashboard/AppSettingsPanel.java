@@ -74,7 +74,6 @@ public class AppSettingsPanel extends Composite {
 		this.jsVarHandler = clientFactory.getJSVariableHandler();
 		this.eventBus = clientFactory.getEventBus();
 		this.formData = new HashMap<String, String>();
-		this.projectName = projectName;
 		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
@@ -87,6 +86,7 @@ public class AppSettingsPanel extends Composite {
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS) {
 							appName = event.name;
 							projectLabel.setText(projectName + " settings: " + appName);
+							project = clientFactory.getProjects().get(projectName);
 							importProjectSettings(project.getAppSettings(), appName);
 						}
 					}
