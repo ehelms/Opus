@@ -70,8 +70,9 @@ public class ProjectManagerController extends Composite {
 					public void onPanelTransition(PanelTransitionEvent event){
 						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
 							appSettingsPanel.setProjectName(projectName);
+							appSettingsPanel.setProject(clientFactory.getProjects().get(projectName));
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(appSettingsPanel));
-						} else if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD ){
+						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
 							projectName = event.name;
 							managerDeckPanel.showWidget(0);
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS) {

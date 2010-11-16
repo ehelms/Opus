@@ -85,12 +85,19 @@ public class AppSettingsPanel extends Composite {
 					public void onPanelTransition(PanelTransitionEvent event){
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS) {
 							appName = event.name;
-							project = clientFactory.getProjects().get(projectName);
 							projectLabel.setText(projectName + " settings: " + appName);
 							importProjectSettings(project.getAppSettings(), appName);
 						}
 					}
 			});
+	}
+	
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
+	
+	public void setProject(Project project) {
+		this.project = project;
 	}
 	
 	public void importProjectSettings(ProjectSettingsData settings, String application) {
@@ -243,10 +250,6 @@ public class AppSettingsPanel extends Composite {
 	    } catch (RequestException e) {
 	    	
 	    }
-	}
-	
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
 	}
 	
 	/**
