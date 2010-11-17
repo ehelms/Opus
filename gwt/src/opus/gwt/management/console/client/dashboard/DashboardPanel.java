@@ -274,7 +274,7 @@ public class DashboardPanel extends Composite {
 					} else if(response.getText().contains("Project activated")) {
 						setActive(true);
 					} else if(response.getText().contains("You asked me to activate the project")) {
-						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS));
+						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS, projectName));
 					} else {
 						ErrorPanel ep = new ErrorPanel(clientFactory);
 			    		ep.errorHTML.setHTML(response.getText());

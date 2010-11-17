@@ -85,16 +85,13 @@ public class ProjectSettingsPanel extends Composite {
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS){
+							projectName = event.getName();
 							projectLabel.setText(projectName + " settings");
 							project = clientFactory.getProjects().get(projectName);
 							importProjectSettings(project.getAppSettings());
 						}
 					}
 			});
-	}
-	
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
 	}
 	
 	public void importProjectSettings(ProjectSettingsData settings) {
