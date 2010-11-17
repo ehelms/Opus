@@ -78,6 +78,7 @@ public class ProjectSettingsPanel extends Composite {
 					public void onPanelTransition(PanelTransitionEvent event){
 						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS){
 							projectLabel.setText(projectName + " settings");
+							project = clientFactory.getProjects().get(projectName);
 							importProjectSettings(project.getAppSettings());
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
 							projectName = event.name;
