@@ -62,7 +62,6 @@ public class AppSettingsPanel extends Composite {
 	private HashMap<String, String> formData;
 
 	@UiField Button saveButton;
-	@UiField Button activateButton;
 	@UiField Label projectLabel;
 	@UiField FormsStyle form;
 	@UiField FlowPanel content;
@@ -208,11 +207,6 @@ public class AppSettingsPanel extends Composite {
 	
 	@UiHandler("saveButton")
 	void handleSaveButton(ClickEvent event) {
-		saveSettings();
-	}
-	
-	@UiHandler("activateButton")
-	void handleActivateButton(ClickEvent event){
 		saveSettings();
 	}
 	

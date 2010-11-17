@@ -15,10 +15,7 @@
 			<g:HTMLPanel styleName="{form.formWrapper}">
 				<g:HTMLPanel styleName="{form.settingsButtonWrapper}">
 					<g:HTMLPanel styleName="{form.fieldLabel}">
-						<g:Button ui:field="activateButton" text="Save and Activate" styleName="{form.button} {form.settingsButton} {form.right}"/>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{form.fieldLabel}">
-						<g:Button ui:field="saveButton" text="Save" styleName="{form.button} {form.settingsButton}"/>
+						<g:Button ui:field="activateButton" text="Save and Activate" styleName="{form.button} {form.settingsButton}"/>
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>

@@ -60,7 +60,6 @@ public class ProjectSettingsPanel extends Composite {
 	private TooltipPanel tooltip;
 	private HashMap<String, String> formData;
 
-	@UiField Button saveButton;
 	@UiField Button activateButton;
 	@UiField Label projectLabel;
 	@UiField FormsStyle form;
@@ -198,11 +197,6 @@ public class ProjectSettingsPanel extends Composite {
 	
 	public void setHasSettings(boolean state) {
 		this.hasSettings = state;
-	}
-	
-	@UiHandler("saveButton")
-	void handleSaveButton(ClickEvent event) {
-		saveSettings();
 	}
 	
 	@UiHandler("activateButton")
