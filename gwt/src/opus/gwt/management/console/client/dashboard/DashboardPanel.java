@@ -272,17 +272,10 @@ public class DashboardPanel extends Composite {
 				public void onResponseReceived(Request request, Response response) {
 					if(response.getText().contains("Project deactivated")) {
 						setActive(false);
-						//eventBus.fireEvent(new UpdateProjectEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 					} else if(response.getText().contains("Project activated")) {
 						setActive(true);
-						//eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
-//						Project project = clientFactory.getProjects().get(projectName);
-//						
-//						if(!project.isActive()) {
-//							String[] appsWithSettings = project.getAppSettings().getApplicationSettings().split(";;;");
-//							
-//							eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS));
-//						}
+					} else if(response.getText().contains("You asked me to activate the project")) {
+						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS));
 					} else {
 						ErrorPanel ep = new ErrorPanel(clientFactory);
 			    		ep.errorHTML.setHTML(response.getText());
