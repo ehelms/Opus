@@ -120,7 +120,6 @@ public class AppSettingsPanel extends Composite {
 			String choiceSettings = settings.getChoiceSettingsArray(appSettings.get(j));
 			
 			String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
-			//String[] choiceSettingsContent = choiceSettingsArray.join(";;").split(";;\\s*");
 			
 			Label appName = new Label(application);
 			

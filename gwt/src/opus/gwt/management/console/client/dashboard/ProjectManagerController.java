@@ -68,7 +68,7 @@ public class ProjectManagerController extends Composite {
 		eventBus.addHandler(PanelTransitionEvent.TYPE, 
 				new PanelTransitionEventHandler(){
 					public void onPanelTransition(PanelTransitionEvent event){
-						if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
+						if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.SETTINGS){
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(appSettingsPanel));
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
 							projectName = event.name;
@@ -76,6 +76,8 @@ public class ProjectManagerController extends Composite {
 							appSettingsPanel.setProject(clientFactory.getProjects().get(projectName));
 							managerDeckPanel.showWidget(0);
 						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTSETTINGS) {
+							projectName = event.name;
+							projectSettingsPanel.setProjectName(projectName);
 							managerDeckPanel.showWidget(managerDeckPanel.getWidgetIndex(projectSettingsPanel));
 						}
 					}

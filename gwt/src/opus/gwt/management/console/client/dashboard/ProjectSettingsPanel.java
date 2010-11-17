@@ -1,9 +1,12 @@
 package opus.gwt.management.console.client.dashboard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
+import opus.gwt.management.console.client.deployer.ErrorPanel;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
 import opus.gwt.management.console.client.overlays.Project;
@@ -14,7 +17,10 @@ import opus.gwt.management.console.client.tools.TooltipPanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -54,6 +60,7 @@ public class ProjectSettingsPanel extends Composite {
 	private boolean hasSettings;
 	private Project project;
 	private TooltipPanel tooltip;
+	private HashMap<String, String> formData;
 
 	@UiField Button saveButton;
 	@UiField Button activateButton;
@@ -70,6 +77,7 @@ public class ProjectSettingsPanel extends Composite {
 		registerHandlers();
 		tooltip = new TooltipPanel();
 		setTooltipInitialState();
+		formData = new HashMap<String, String>();
 	}
 	
 	private void registerHandlers() {
@@ -80,12 +88,13 @@ public class ProjectSettingsPanel extends Composite {
 							projectLabel.setText(projectName + " settings");
 							project = clientFactory.getProjects().get(projectName);
 							importProjectSettings(project.getAppSettings());
-						} else if(event.getTransitionType() == PanelTransitionEvent.TransitionTypes.DASHBOARD){
-							projectName = event.name;
-							project = clientFactory.getProjects().get(projectName);
 						}
 					}
 			});
+	}
+	
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	
 	public void importProjectSettings(ProjectSettingsData settings) {
@@ -110,15 +119,14 @@ public class ProjectSettingsPanel extends Composite {
 				String choiceSettings = settings.getChoiceSettingsArray(appSettings.get(j));
 				
 				String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
-				//String[] choiceSettingsContent = choiceSettingsArray.join(";;").split(";;\\s*");
 				
 				Label appName = new Label(appsWithSettings[i]);
 				
-				Label description = new Label(settingsContent[0]);
+				final Label description = new Label(settingsContent[0]);
 				description.setStyleName(form.settingsFieldLabel());
 				field.add(description);
 				
-				if(settingsContent[2].equals("string")) {
+				if(settingsContent[2].equals("string") || settingsContent[2].equals("int")) {
 					final TextBox setting = new TextBox();
 					setting.setName(settingsContent[1]);
 					setting.setStyleName(form.greyBorder());
@@ -142,46 +150,47 @@ public class ProjectSettingsPanel extends Composite {
 						}
 					});
 					
-					field.add(setting);
-				} else if(settingsContent[2].equals("int")) {
-					final TextBox setting = new TextBox();
-					setting.setName(settingsContent[1]);
-					setting.setStyleName(form.greyBorder());
-					
-					if(settingsContent.length > 3) {
-						setting.setText(settingsContent[3]);
-					}
-					
-					setting.addFocusHandler(new FocusHandler() {
-						public void onFocus(FocusEvent event) {
-							tooltip.hide();
-							tooltip.setVisible(true);
-							
-							int x = getTooltipPosition(setting)[0];
-							int y = getTooltipPosition(setting)[1];
-								
-							tooltip.setGray();
-							setTooltipPosition(x, y);
-							tooltip.show();
-							setTooltipText(setting.getName());
+					setting.addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							formData.remove(description.getText());
+							formData.put(description.getText(), setting.getText());
 						}
 					});
 					
+					formData.put(description.getText(), setting.getValue());
 					field.add(setting);
 				} else if(settingsContent[2].equals("choice")) {
-					ListBox setting = new ListBox();
+					final ListBox setting = new ListBox();
 					setting.setName(settingsContent[1]);
 					setting.setStyleName(form.greyBorder());
 					setting.getElement().setInnerHTML(choiceSettings);
 					
+					setting.addChangeHandler(new ChangeHandler() {
+						public void onChange(ChangeEvent event) {
+							formData.remove(description.getText());
+							formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+						}
+					});
+					
+					formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
 					field.add(setting);
 				} else if(settingsContent[2].equals("bool")) {
-					CheckBox setting = new CheckBox();
+					final CheckBox setting = new CheckBox();
 					setting.setName(settingsContent[1]);
 					
 					if (settingsContent.length > 3) {
 						setting.setValue(Boolean.valueOf(settingsContent[3]));
 					}
+					
+					setting.addClickHandler(new ClickHandler() {
+						public void onClick(ClickEvent event) {
+							formData.remove(description.getText());
+							formData.put(description.getText(), setting.getValue().toString());
+						}
+					});
+					
+					formData.put(description.getText(), setting.getValue().toString());
+					field.add(setting);
 				}
 	
 				fieldWrapper.add(field);
@@ -207,25 +216,36 @@ public class ProjectSettingsPanel extends Composite {
 	}
 	
 	private void saveSettings(){
-	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, optionsUrl.replaceAll("projectName", this.projectName));
-	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
-		
 	    StringBuffer formBuilder = new StringBuffer();
-	    
 	    formBuilder.append("csrfmiddlewaretoken=");
 		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
+		
+		for(String key : formData.keySet()) {
+			formBuilder.append("&" + projectName + "-" + key + "=" + formData.get(key));
+		}
+		
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, optionsUrl.replaceAll("projectName", this.projectName));
+	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 		
 	    try {
 		      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
 		        public void onError(Request request, Throwable exception) {
-		        	Window.alert("ERORR SENDING FORM WITH REQUEST BUILDER");
+		        	ErrorPanel ep = new ErrorPanel(clientFactory);
+		    		ep.errorHTML.setHTML("<p>Error Occured</p>");
+		    		content.clear();
+		    		content.add(ep);
 		        }
 
 		        public void onResponseReceived(Request request, Response response) {
-			    	if( response.getText().contains("") ){
-			    	
+			    	if(response.getText().contains("Settings saved")){
+			    		formData = new HashMap<String, String>();
+			    	    eventBus.fireEvent(new AsyncRequestEvent("updateProject", projectName));
+			    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 			    	} else {
-			    	
+			    		ErrorPanel ep = new ErrorPanel(clientFactory);
+			    		ep.errorHTML.setHTML(response.getText());
+			    		content.clear();
+			    		content.add(ep);
 			    	}
 		        }});
 		    } catch (RequestException e) {

@@ -265,7 +265,6 @@ public class DashboardPanel extends Composite {
 		    		ep.errorHTML.setHTML("<p>Error Occured</p>");
 		    		applicationsFlowPanel.clear();
 		    		applicationsFlowPanel.add(ep);
-		    		//applicationsFlowPanel.showWidget(applicationsFlowPanel.getWidgetIndex(ep));
 		        }
 				
 				@Override
