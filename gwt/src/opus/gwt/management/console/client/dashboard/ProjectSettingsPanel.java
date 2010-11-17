@@ -50,7 +50,7 @@ public class ProjectSettingsPanel extends Composite {
 	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettingsPanel> {}
 	private static ProjectSettingsUiBinder uiBinder = GWT.create(ProjectSettingsUiBinder.class);
 	
-	private final String optionsUrl = "/deployments/projectName/confapps";
+	private final String optionsUrl = "/deployments/projectName/";
 	
 	private String projectName;
 	private ClientFactory clientFactory;
