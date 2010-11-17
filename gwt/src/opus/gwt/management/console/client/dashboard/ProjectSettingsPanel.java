@@ -50,8 +50,6 @@ public class ProjectSettingsPanel extends Composite {
 	interface ProjectSettingsUiBinder extends UiBinder<Widget, ProjectSettingsPanel> {}
 	private static ProjectSettingsUiBinder uiBinder = GWT.create(ProjectSettingsUiBinder.class);
 	
-	private final String optionsUrl = "/deployments/projectName/";
-	
 	private String projectName;
 	private ClientFactory clientFactory;
 	private JSVariableHandler jsVarHandler;
@@ -100,7 +98,7 @@ public class ProjectSettingsPanel extends Composite {
 		
 		String[] appsWithSettings = project.getAppSettings().getApplicationSettings().split(";;;");
 		
-		for(int i = 0; i < appsWithSettings.length - 1; i++) {
+		for(int i = 0; i < appsWithSettings.length; i++) {
 			JsArray<JavaScriptObject> appSettings = settings.getAppSettings(appsWithSettings[i]);
 			
 			FlowPanel formWrapper = new FlowPanel();
@@ -221,7 +219,7 @@ public class ProjectSettingsPanel extends Composite {
 			formBuilder.append("&" + projectName + "-" + key + "=" + formData.get(key));
 		}
 		
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, optionsUrl.replaceAll("projectName", this.projectName));
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
 	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 		
 	    try {
