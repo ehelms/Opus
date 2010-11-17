@@ -222,7 +222,7 @@ public class AppSettingsPanel extends Composite {
 		formBuilder.append(URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
 		
 		for(String key : formData.keySet()) {
-			formBuilder.append("&" + projectName + "-" + key + "=" + formData.get(key));
+			formBuilder.append("&" + appName + "-" + key + "=" + formData.get(key));
 		}
 		
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");

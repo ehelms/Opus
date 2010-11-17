@@ -115,7 +115,7 @@ public class ProjectSettingsPanel extends Composite {
 				
 				String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
 				
-				Label appName = new Label(appsWithSettings[i]);
+				final Label appName = new Label(appsWithSettings[i]);
 				
 				final Label description = new Label(settingsContent[0]);
 				description.setStyleName(form.settingsFieldLabel());
@@ -147,12 +147,12 @@ public class ProjectSettingsPanel extends Composite {
 					
 					setting.addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
-							formData.remove(description.getText());
-							formData.put(description.getText(), setting.getText());
+							formData.remove("&" + appName.getText() + "-" + description.getText());
+							formData.put("&" + appName.getText() + "-" + description.getText(), setting.getText());
 						}
 					});
 					
-					formData.put(description.getText(), setting.getValue());
+					formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue());
 					field.add(setting);
 				} else if(settingsContent[2].equals("choice")) {
 					final ListBox setting = new ListBox();
@@ -162,12 +162,12 @@ public class ProjectSettingsPanel extends Composite {
 					
 					setting.addChangeHandler(new ChangeHandler() {
 						public void onChange(ChangeEvent event) {
-							formData.remove(description.getText());
-							formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+							formData.remove("&" + appName.getText() + "-" + description.getText());
+							formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue(setting.getSelectedIndex()));
 						}
 					});
 					
-					formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+					formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue(setting.getSelectedIndex()));
 					field.add(setting);
 				} else if(settingsContent[2].equals("bool")) {
 					final CheckBox setting = new CheckBox();
@@ -179,12 +179,12 @@ public class ProjectSettingsPanel extends Composite {
 					
 					setting.addClickHandler(new ClickHandler() {
 						public void onClick(ClickEvent event) {
-							formData.remove(description.getText());
-							formData.put(description.getText(), setting.getValue().toString());
+							formData.remove("&" + appName.getText() + "-" + description.getText());
+							formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue().toString());
 						}
 					});
 					
-					formData.put(description.getText(), setting.getValue().toString());
+					formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue().toString());
 					field.add(setting);
 				}
 	
@@ -216,7 +216,7 @@ public class ProjectSettingsPanel extends Composite {
 		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
 		
 		for(String key : formData.keySet()) {
-			formBuilder.append("&" + projectName + "-" + key + "=" + formData.get(key));
+			formBuilder.append(key + "=" + formData.get(key));
 		}
 		
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
