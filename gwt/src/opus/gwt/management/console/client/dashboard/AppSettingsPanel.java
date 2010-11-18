@@ -86,7 +86,13 @@ public class AppSettingsPanel extends Composite {
 							appName = event.name;
 							projectLabel.setText(projectName + " settings: " + appName);
 							project = clientFactory.getProjects().get(projectName);
-							importProjectSettings(project.getAppSettings(), appName);
+							for(int i = 0; i < project.getApps().length(); i++) {
+								if(project.getApps().get(i).equals(appName)) {
+									displayApplicationSettings(project.getAppSettings(), appName);
+								} else {
+									importApplicationSettings(project.getAppSettings(), project.getApps().get(i));
+								}
+							}
 						}
 					}
 			});
@@ -100,7 +106,7 @@ public class AppSettingsPanel extends Composite {
 		this.project = project;
 	}
 	
-	public void importProjectSettings(ProjectSettingsData settings, String application) {
+	private void displayApplicationSettings(ProjectSettingsData settings, String application) {
 		content.clear();
 		content.setStyleName(form.content());
 		
@@ -199,6 +205,51 @@ public class AppSettingsPanel extends Composite {
 		}
 		
 		content.add(formWrapper);
+	}
+	
+	private void importApplicationSettings(ProjectSettingsData settings, String application) {
+		JsArray<JavaScriptObject> appSettings = settings.getAppSettings(application);
+
+		for(int j = 0; j < appSettings.length(); j++) {
+			JsArray<JavaScriptObject> settingsArray = settings.getSettingsArray(appSettings.get(j));
+			String choiceSettings = settings.getChoiceSettingsArray(appSettings.get(j));
+			
+			String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
+			
+			Label appName = new Label(application);
+			
+			final Label description = new Label(settingsContent[0]);
+			description.setTitle(settingsContent[0]);
+			description.setStyleName(form.settingsFieldLabel());
+			
+			if(settingsContent[2].equals("string") || settingsContent[2].equals("int")) {
+				final TextBox setting = new TextBox();
+				setting.setName(settingsContent[1]);
+				setting.setStyleName(form.greyBorder());
+				
+				if(settingsContent.length > 3) {
+					setting.setText(settingsContent[3]);
+				}
+				
+				formData.put(description.getText(), setting.getValue());
+			} else if(settingsContent[2].equals("choice")) {
+				final ListBox setting = new ListBox();
+				setting.setName(settingsContent[1]);
+				setting.setStyleName(form.greyBorder());
+				setting.getElement().setInnerHTML(choiceSettings);
+				
+				formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+			} else if(settingsContent[2].equals("bool")) {
+				final CheckBox setting = new CheckBox();
+				setting.setName(settingsContent[1]);
+				
+				if (settingsContent.length > 3) {
+					setting.setValue(Boolean.valueOf(settingsContent[3]));
+				}
+
+				formData.put(description.getText(), setting.getValue().toString());
+			}
+		}
 	}
 	
 	public void setHasSettings(boolean state) {
