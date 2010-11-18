@@ -262,7 +262,7 @@ public class ProjectSettingsPanel extends Composite {
 				
 				@Override
 				public void onResponseReceived(Request request, Response response) {
-					if(response.getText().contains("Settings saved, and project activated")) {
+					if(response.getText().contains("Project activated")) {
 						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 					} else {
 						ErrorPanel ep = new ErrorPanel(clientFactory);

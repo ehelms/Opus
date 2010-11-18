@@ -80,6 +80,7 @@ public class IconPanel extends Composite {
 				public void onPanelTransition(PanelTransitionEvent event){
 					if( event.getTransitionType() == PanelTransitionEvent.TransitionTypes.PROJECTS ){
 						setupBreadCrumbs();
+						handleProjects();
 					}
 				}
 		});
