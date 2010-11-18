@@ -126,7 +126,7 @@ public class AppSettingsPanel extends Composite {
 			
 			String[] settingsContent = settingsArray.join(";;").split(";;\\s*");
 			
-			Label appName = new Label(application);
+			final Label appName = new Label(application);
 			
 			final Label description = new Label(settingsContent[0]);
 			description.setTitle(settingsContent[0]);
@@ -159,12 +159,14 @@ public class AppSettingsPanel extends Composite {
 				
 				setting.addChangeHandler(new ChangeHandler() {
 					public void onChange(ChangeEvent event) {
-						formData.remove(description.getText());
-						formData.put(description.getText(), setting.getText());
+//						formData.remove(description.getText());
+//						formData.put(description.getText(), setting.getText());
+						formData.remove("&" + appName.getText() + "-" + description.getText());
+						formData.put("&" + appName.getText() + "-" + description.getText(), setting.getText());
 					}
 				});
 				
-				formData.put(description.getText(), setting.getValue());
+				formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue());
 				fields.add(setting);
 			} else if(settingsContent[2].equals("choice")) {
 				final ListBox setting = new ListBox();
@@ -174,12 +176,14 @@ public class AppSettingsPanel extends Composite {
 				
 				setting.addChangeHandler(new ChangeHandler() {
 					public void onChange(ChangeEvent event) {
-						formData.remove(description.getText());
-						formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+//						formData.remove(description.getText());
+//						formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+						formData.remove("&" + appName.getText() + "-" + description.getText());
+						formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue(setting.getSelectedIndex()));
 					}
 				});
 				
-				formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+				formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue(setting.getSelectedIndex()));
 				fields.add(setting);
 			} else if(settingsContent[2].equals("bool")) {
 				final CheckBox setting = new CheckBox();
@@ -191,12 +195,14 @@ public class AppSettingsPanel extends Composite {
 				
 				setting.addClickHandler(new ClickHandler() {
 					public void onClick(ClickEvent event) {
-						formData.remove(description.getText());
-						formData.put(description.getText(), setting.getValue().toString());
+//						formData.remove(description.getText());
+//						formData.put(description.getText(), setting.getValue().toString());
+						formData.remove("&" + appName.getText() + "-" + description.getText());
+						formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue().toString());
 					}
 				});
 				
-				formData.put(description.getText(), setting.getValue().toString());
+				formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue().toString());
 				fields.add(setting);
 			}
 
@@ -231,14 +237,14 @@ public class AppSettingsPanel extends Composite {
 					setting.setText(settingsContent[3]);
 				}
 				
-				formData.put(description.getText(), setting.getValue());
+				formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue());
 			} else if(settingsContent[2].equals("choice")) {
 				final ListBox setting = new ListBox();
 				setting.setName(settingsContent[1]);
 				setting.setStyleName(form.greyBorder());
 				setting.getElement().setInnerHTML(choiceSettings);
 				
-				formData.put(description.getText(), setting.getValue(setting.getSelectedIndex()));
+				formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue(setting.getSelectedIndex()));
 			} else if(settingsContent[2].equals("bool")) {
 				final CheckBox setting = new CheckBox();
 				setting.setName(settingsContent[1]);
@@ -247,7 +253,7 @@ public class AppSettingsPanel extends Composite {
 					setting.setValue(Boolean.valueOf(settingsContent[3]));
 				}
 
-				formData.put(description.getText(), setting.getValue().toString());
+				formData.put("&" + appName.getText() + "-" + description.getText(), setting.getValue().toString());
 			}
 		}
 	}
@@ -267,7 +273,8 @@ public class AppSettingsPanel extends Composite {
 		formBuilder.append(URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
 		
 		for(String key : formData.keySet()) {
-			formBuilder.append("&" + appName + "-" + key + "=" + formData.get(key));
+//			formBuilder.append("&" + appName + "-" + key + "=" + formData.get(key));
+			formBuilder.append(key + "=" + formData.get(key));
 		}
 		
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/confapps");
