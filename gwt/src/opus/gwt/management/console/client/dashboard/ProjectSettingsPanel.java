@@ -227,9 +227,9 @@ public class ProjectSettingsPanel extends Composite {
 
 		        public void onResponseReceived(Request request, Response response) {
 			    	if(response.getText().contains("Settings saved")){
+			    		activateProject(projectName);
 			    		formData = new HashMap<String, String>();
 			    	    eventBus.fireEvent(new AsyncRequestEvent("updateProject", projectName));
-			    		eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
 			    	} else {
 			    		ErrorPanel ep = new ErrorPanel(clientFactory);
 			    		ep.errorHTML.setHTML(response.getText());
@@ -240,6 +240,42 @@ public class ProjectSettingsPanel extends Composite {
 		    } catch (RequestException e) {
 		    	
 		    }
+	}
+	
+	private void activateProject(final String projectName) {
+		StringBuffer formBuilder = new StringBuffer();
+		formBuilder.append("csrfmiddlewaretoken=");
+		formBuilder.append( URL.encodeQueryString(jsVarHandler.getCSRFTokenURL()));
+		formBuilder.append("&active=true");
+		
+	    RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/");
+		builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+		
+		try {
+			Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
+				public void onError(Request request, Throwable exception) {
+		        	ErrorPanel ep = new ErrorPanel(clientFactory);
+		    		ep.errorHTML.setHTML("<p>Error Occured</p>");
+		    		content.clear();
+		    		content.add(ep);
+		        }
+				
+				@Override
+				public void onResponseReceived(Request request, Response response) {
+					if(response.getText().contains("Settings saved, and project activated")) {
+						eventBus.fireEvent(new PanelTransitionEvent(PanelTransitionEvent.TransitionTypes.DASHBOARD, projectName));
+					} else {
+						ErrorPanel ep = new ErrorPanel(clientFactory);
+			    		ep.errorHTML.setHTML(response.getText());
+			    		content.clear();
+			    		content.add(ep);
+					}
+				}
+			});
+		} catch (RequestException e) {
+			
+		}
+		
 	}
 	
 	/**

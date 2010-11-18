@@ -289,6 +289,10 @@ public class DashboardPanel extends Composite {
 	}
 	
 	private void setActive(boolean active) {
+		setActive(active, this.projectName);
+	}
+	
+	private void setActive(boolean active, String projectName) {
 		if(active) {
 			activeButton.setText("Deactivate project");
 		} else {
