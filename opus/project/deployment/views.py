@@ -306,8 +306,8 @@ def create(request, projectname):
     Also has the feature to pre-fill out the form from an incomming JSON token.
 
     """
-    if request.method == "POST" and request.META['CONTENT_TYPE'] == \
-            "application/x-www-form-urlencoded":
+    if request.method == "POST" and
+        request.META['CONTENT_TYPE'].find("application/x-www-form-urlencoded") != -1:
         # If the submitted type is not form encoded data, it's probably a json
         # spec of applications, which should instead go to populate and display
         # the forms.
