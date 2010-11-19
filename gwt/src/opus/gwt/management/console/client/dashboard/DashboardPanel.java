@@ -164,25 +164,6 @@ public class DashboardPanel extends Composite {
 		    } catch (RequestException e) {
 		    	
 		    }
-	    
-		deleteForm.setMethod(FormPanel.METHOD_POST);
-		deleteForm.setVisible(false);
-		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
-		deleteTitlePanel.add(deleteForm);
-		final String deletedProject = projectName;
-		deleteForm.addSubmitHandler(new FormPanel.SubmitHandler() {
-		      public void onSubmit(SubmitEvent event) {
-		          deleteForm.add(new Hidden("csrfmiddlewaretoken", JSVarHandler.getCSRFTokenURL()));
-		      }
-		 });
-		deleteForm.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
-		      public void onSubmitComplete(SubmitCompleteEvent event) {
-		    	  eventBus.fireEvent(new DeleteProjectEvent(deletedProject));
-		      }
-		 });
-		
-		deleteForm.submit();
-		deletePopupPanel.hide();
 	}
 
 	public void handleProjectInformation(String projectName){
