@@ -21,8 +21,6 @@ import com.google.gwt.resources.client.CssResource;
 public class TooltipPanelCss {
 	public interface TooltipPanelStyle extends CssResource {
 		String tooltip_right();
-		String tooltip_right_red();
 		String tooltip_left();
-		String tooltip_left_red();
 	}
 }

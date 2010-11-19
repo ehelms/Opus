@@ -17,6 +17,8 @@
 .managerDeckPanel {
 	padding: 0;	
 	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 	font-size: .8em;
 	min-height: 400px;
 	min-width: 600px;
@@ -30,6 +32,8 @@
     margin-bottom: 5px;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
     width: 100%;
 }
 

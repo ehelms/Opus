@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class IconPanel extends Composite {
@@ -70,7 +71,7 @@ public class IconPanel extends Composite {
 		desc = DescriptionPanel.getInstance();
 		registerHandlers();
 		setupBreadCrumbs();
-		setAppDescPanelInitialState();
+		setDescPanelInitialState();
 		handleProjects();
 	}
 	
@@ -130,9 +131,9 @@ public class IconPanel extends Composite {
 		testLabel.addMouseOverHandler(new MouseOverHandler(){
 			public void onMouseOver(MouseOverEvent event){
 				testLabel.setStyleName(style.projectIconActive());
+				int[] pos = getDescPosition(testLabel);
 				desc.show();
-				desc.setPopupPosition(testLabel.getAbsoluteLeft() +
-						testLabel.getOffsetWidth(), testLabel.getAbsoluteTop() - 5);
+				desc.setPopupPosition(pos[0], pos[1]);
 				desc.setTitle("Applications");
 				desc.setText(appNames);
 			}
@@ -159,11 +160,25 @@ public class IconPanel extends Composite {
 		projectIconsFlowPanel.remove(iconMap.remove(name));
 	}
 	
-	private void setAppDescPanelInitialState() {
+	private void setDescPanelInitialState() {
 		desc.setVisible(false);
 		desc.show();
 		desc.setPopupPosition(-100, -100);
 		desc.hide();
 		desc.setVisible(true);
+	}
+	
+	private int[] getDescPosition(FocusPanel label) {
+		int[] pos = new int[2];
+		
+		pos[0] = label.getAbsoluteLeft() + label.getOffsetWidth();
+		
+		if(Window.Navigator.getUserAgent().contains("Gecko")) {
+			pos[1] = label.getAbsoluteTop() - 4;
+		} else {
+			pos[1] = label.getAbsoluteTop() - 5;
+		}
+		
+		return pos;
 	}
 }

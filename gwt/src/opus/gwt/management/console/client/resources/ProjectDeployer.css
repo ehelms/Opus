@@ -17,6 +17,8 @@
 .deployerDeckPanel {
 	padding: 0;	
 	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 	font-size: .8em;
 	-webkit-box-shadow: 0px 3px 5px #BFBFBF;
 	-moz-box-shadow:0px 3px 5px #BFBFBF;
@@ -30,6 +32,8 @@
     margin-bottom: 5px;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
+    -moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
 }
 
 .header h1 {

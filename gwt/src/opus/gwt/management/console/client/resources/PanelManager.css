@@ -23,15 +23,24 @@
 	min-height: 800px;
 	min-width: 1100px;
 	font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 .mainDockLayoutPanel {
 	background: url('body-bg.png') 0px 225px repeat-x, #F0F0F0;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 .mainContentPanel {
 	background: white;
 	margin: 1em auto;
 	width: 80%;
 	padding: 0;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
 }
 .navigationPanel{
 	box-shadow: 10px 10px 10px white;

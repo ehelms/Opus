@@ -34,14 +34,6 @@ public class TooltipPanel extends PopupPanel {
 	}
 	
 	/**
-	 * Set the tooltip to a red color; typically used for errors
-	 */
-	public void setRed() {
-		content.setStyleName(style.tooltip_right_red());
-		arrow.setStyleName(style.tooltip_left_red());
-	}
-	
-	/**
 	 * Set the tooltip to a gray color; default color
 	 */
 	public void setGray() {

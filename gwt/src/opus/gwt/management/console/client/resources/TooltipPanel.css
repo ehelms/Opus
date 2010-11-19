@@ -12,7 +12,7 @@ div.tooltip {
 
 .arrow {
 	float: left;
-	width: 9px;
+	width: 8px;
 	padding-top: 3px
 }
 
@@ -33,24 +33,4 @@ div.tooltip {
     height: 100%;
     float: right;
     font-size: .8em;
-}
-
-.tooltip_left_red {
-	width: 4%;
-    height: 100%;
-    float: left;
-    padding: 25px 0 0 0;
-	background: url('arrow-red.png') no-repeat 0px 5px;
-}
-
-.tooltip_right_red {
-	-moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    background: #323232;
-    padding: 3px;
-    width: 90%;
-    height: 100%;
-    float: right;
-    font-size: .8em;
-    background: #FF0000;
 }

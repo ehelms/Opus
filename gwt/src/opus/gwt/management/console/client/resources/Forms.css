@@ -87,6 +87,9 @@ select {
 	width: 150px;
 	margin: 0 0 5px 10px;
 	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-moz-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
 	-webkit-box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
 	box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.2);
 	float: left;
@@ -99,8 +102,8 @@ select {
 }
 
 .button {
+	background: literal("-moz-linear-gradient(0% 100% 90deg, #477725, #588B34)");
 	background: literal("-webkit-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725))");
-	background: literal("-moz-linear-gradient(linear, 0% 0%, 0% 100%, from(#588b34), to(#477725))");
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
