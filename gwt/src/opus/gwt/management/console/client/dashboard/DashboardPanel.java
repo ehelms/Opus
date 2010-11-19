@@ -21,6 +21,7 @@ import java.util.HashMap;
 import opus.gwt.management.console.client.ClientFactory;
 import opus.gwt.management.console.client.JSVariableHandler;
 import opus.gwt.management.console.client.deployer.ErrorPanel;
+import opus.gwt.management.console.client.event.AsyncRequestEvent;
 import opus.gwt.management.console.client.event.DeleteProjectEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEvent;
 import opus.gwt.management.console.client.event.PanelTransitionEventHandler;
@@ -135,7 +136,35 @@ public class DashboardPanel extends Composite {
 	
 	@UiHandler("destroyButton")
 	void onDestroyButtonClick(ClickEvent event) {
-		clientFactory.getProjects().remove(projectName);
+		StringBuffer formBuilder = new StringBuffer();
+		formBuilder.append("csrfmiddlewaretoken=");
+		formBuilder.append( URL.encodeQueryString(JSVarHandler.getCSRFTokenURL()));
+		
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, "/deployments/" + projectName + "/destroy");
+	    builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+	    
+	    try {
+		      Request request = builder.sendRequest(formBuilder.toString(), new RequestCallback() {
+		        public void onError(Request request, Throwable exception) {
+		        	ErrorPanel ep = new ErrorPanel(clientFactory);
+		    		ep.errorHTML.setHTML("<p>Error Occured</p>");
+		    		applicationsFlowPanel.add(ep);
+		        }
+
+		        public void onResponseReceived(Request request, Response response) {
+			    	if(response.getText().contains("scheduled for destruction")){
+			    		clientFactory.getProjects().remove(projectName);
+			    		eventBus.fireEvent(new DeleteProjectEvent(projectName));
+			    	} else {
+			    	 	ErrorPanel ep = new ErrorPanel(clientFactory);
+			    		ep.errorHTML.setHTML(response.getText());
+			    		applicationsFlowPanel.add(ep);
+			    	}
+		        }});
+		    } catch (RequestException e) {
+		    	
+		    }
+	    
 		deleteForm.setMethod(FormPanel.METHOD_POST);
 		deleteForm.setVisible(false);
 		deleteForm.setAction(JSVarHandler.getDeployerBaseURL() + deleteProjectURL.replaceAll("/projectName/", "/" + projectName +"/"));
