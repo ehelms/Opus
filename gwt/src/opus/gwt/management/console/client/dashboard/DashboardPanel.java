@@ -155,6 +155,7 @@ public class DashboardPanel extends Composite {
 			    	if(response.getText().contains("scheduled for destruction")){
 			    		clientFactory.getProjects().remove(projectName);
 			    		eventBus.fireEvent(new DeleteProjectEvent(projectName));
+			    		deletePopupPanel.hide();
 			    	} else {
 			    	 	ErrorPanel ep = new ErrorPanel(clientFactory);
 			    		ep.errorHTML.setHTML(response.getText());
