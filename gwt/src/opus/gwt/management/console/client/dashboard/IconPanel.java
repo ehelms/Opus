@@ -173,10 +173,10 @@ public class IconPanel extends Composite {
 		
 		pos[0] = label.getAbsoluteLeft() + label.getOffsetWidth();
 		
-		if(Window.Navigator.getUserAgent().contains("Gecko")) {
-			pos[1] = label.getAbsoluteTop() - 4;
-		} else {
+		if(Window.Navigator.getUserAgent().contains("WebKit")) {
 			pos[1] = label.getAbsoluteTop() - 5;
+		} else {
+			pos[1] = label.getAbsoluteTop() - 4;
 		}
 		
 		return pos;
